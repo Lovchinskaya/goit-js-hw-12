@@ -4,11 +4,11 @@ import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-import { fetchPhotos } from './js/pixabay-api';
-import { renderPhotoCards } from './js/render-functions';
+import { fetchImages } from './js/pixabay-api';
+import { cardMockup } from './js/render-functions';
 
-const formEl = document.querySelector('.form-search');
-const galleryContainer = document.querySelector('.gallery');
+const searchForm = document.querySelector('.form-search');
+const gallery = document.querySelector('.gallery');
 const loader = document.querySelector('.loader');
 const loadMoreBtn = document.querySelector('.load-more-btn');
 
@@ -18,9 +18,9 @@ let lightbox;
 
 loader.style.display = 'none';
 
-const onFormSubmit = async event => {
+const submitForm = async event => {
   event.preventDefault();
-  galleryContainer.innerHTML = '';
+  gallery.innerHTML = '';
 
   query = event.currentTarget.elements.user_query.value.trim();
   page = 1;
@@ -40,7 +40,7 @@ const onFormSubmit = async event => {
   loader.style.display = 'block';
 
   try {
-    const { data } = await fetchPhotos(query, page);
+    const { data } = await fetchImages(query, page);
 
     if (!data.hits.length) {
       iziToast.error({
@@ -51,17 +51,17 @@ const onFormSubmit = async event => {
       });
       return;
     }
-    const markup = renderPhotoCards(data.hits);
-    galleryContainer.insertAdjacentHTML('beforeend', markup);
+    const markup = cardMockup(data.hits);
+    gallery.insertAdjacentHTML('beforeend', markup);
 
-    lightbox = new SimpleLightbox('.gallery-item', {
+    lightbox = new SimpleLightbox('.gallery-link', {
       captions: true,
       captionsData: 'alt',
       captionDelay: 250,
     });
     lightbox.refresh();
 
-    formEl.reset();
+    searchForm.reset();
 
     if (data.totalHits > 1) {
       loadMoreBtn.classList.remove('is-hidden');
@@ -75,17 +75,17 @@ const onFormSubmit = async event => {
   }
 };
 
-formEl.addEventListener('submit', onFormSubmit);
+searchForm.addEventListener('submit', submitForm);
 
 const onLoadMoreBtnClick = async event => {
   loader.style.display = 'block';
   page++;
   try {
-    const { data } = await fetchPhotos(query, page);
+    const { data } = await fetchImages(query, page);
     loader.style.display = 'none';
 
-    const markup = renderPhotoCards(data.hits);
-    galleryContainer.insertAdjacentHTML('beforeend', markup);
+    const markup = cardMockup(data.hits);
+    gallery.insertAdjacentHTML('beforeend', markup);
 
     lightbox.refresh();
 
@@ -110,7 +110,7 @@ const onLoadMoreBtnClick = async event => {
 };
 
 const smoothScroll = () => {
-  const { height: cardHeight } = galleryContainer.getBoundingClientRect();
+  const { height: cardHeight } = gallery.getBoundingClientRect();
   window.scrollBy({
     top: cardHeight * 2,
     behavior: 'smooth',
