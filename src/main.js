@@ -14,8 +14,12 @@ const loadMoreBtn = document.querySelector('.load-more-btn');
 
 let page = 1;
 let query = '';
-let lightbox;
 
+const lightbox = new SimpleLightbox('.gallery-link', {
+    captions: true,
+    captionsData: 'alt',
+    captionDelay: 250,
+  });
 loader.style.display = 'none';
 
 const submitForm = async event => {
@@ -37,8 +41,6 @@ const submitForm = async event => {
     return;
   }
 
-  loader.style.display = 'block';
-
   try {
     const { data } = await fetchImages(query, page);
 
@@ -54,11 +56,6 @@ const submitForm = async event => {
     const markup = cardMockup(data.hits);
     gallery.insertAdjacentHTML('beforeend', markup);
 
-    lightbox = new SimpleLightbox('.gallery-link', {
-      captions: true,
-      captionsData: 'alt',
-      captionDelay: 250,
-    });
     lightbox.refresh();
 
     searchForm.reset();
@@ -69,7 +66,11 @@ const submitForm = async event => {
       loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
     }
   } catch (error) {
-    console.log(error);
+    iziToast.error({
+      title: 'Error',
+      position: 'topRight',
+      message: 'Failed to load images. Please try again later.',
+    });
   } finally {
     loader.style.display = 'none';
   }
@@ -97,9 +98,10 @@ const onLoadMoreBtnClick = async event => {
       });
       loadMoreBtn.classList.add('is-hidden');
       loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
+      smoothScroll();
     }
 
-    smoothScroll();
+
   } catch (error) {
     iziToast.error({
       title: 'Error',
@@ -109,10 +111,10 @@ const onLoadMoreBtnClick = async event => {
   }
 };
 
-const smoothScroll = () => {
-  const { height: cardHeight } = gallery.getBoundingClientRect();
+ const smoothScroll = () => {
+  const  { height: cardHeight } = card.getBoundingClientRect();
   window.scrollBy({
-    top: cardHeight * 2,
+    top: cardHeight,
     behavior: 'smooth',
   });
-};
+ };
