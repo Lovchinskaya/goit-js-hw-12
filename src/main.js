@@ -55,9 +55,7 @@ const submitForm = async event => {
     }
     const markup = cardMockup(data.hits);
     gallery.insertAdjacentHTML('beforeend', markup);
-
     lightbox.refresh();
-
     searchForm.reset();
 
     if (data.totalHits > 1) {
@@ -96,8 +94,6 @@ const onLoadMoreBtnClick = async event => {
       loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
       smoothScroll();
     }
-
-
   } catch (error) {
     iziToast.error({
       title: 'Error',
