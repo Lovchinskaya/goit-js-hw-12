@@ -14,12 +14,12 @@ const loadMoreBtn = document.querySelector('.load-more-btn');
 
 let page = 1;
 let query = '';
-
 const lightbox = new SimpleLightbox('.gallery-link', {
-    captions: true,
-    captionsData: 'alt',
-    captionDelay: 250,
-  });
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+
 loader.style.display = 'none';
 
 const submitForm = async event => {
@@ -66,11 +66,7 @@ const submitForm = async event => {
       loadMoreBtn.addEventListener('click', onLoadMoreBtnClick);
     }
   } catch (error) {
-    iziToast.error({
-      title: 'Error',
-      position: 'topRight',
-      message: 'Failed to load images. Please try again later.',
-    });
+     console.log(error);
   } finally {
     loader.style.display = 'none';
   }
@@ -87,7 +83,7 @@ const onLoadMoreBtnClick = async event => {
 
     const markup = cardMockup(data.hits);
     gallery.insertAdjacentHTML('beforeend', markup);
-
+    smoothScroll();
     lightbox.refresh();
 
     if (page * 15 >= data.totalHits) {
@@ -112,9 +108,9 @@ const onLoadMoreBtnClick = async event => {
 };
 
  const smoothScroll = () => {
-  const  { height: cardHeight } = card.getBoundingClientRect();
+  const  { height: cardHeight } = gallery.firstElementChild.getBoundingClientRect();
   window.scrollBy({
-    top: cardHeight,
+    top: cardHeight * 2,
     behavior: 'smooth',
   });
  };
