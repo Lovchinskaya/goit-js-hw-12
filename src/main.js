@@ -68,7 +68,6 @@ const submitForm = async event => {
         message: "We're sorry, but you've reached the end of search results.",
       });
       loadMoreBtn.classList.add('is-hidden');
-      loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
       smoothScroll();
     }
   } catch (error) {
@@ -103,7 +102,6 @@ const onLoadMoreBtnClick = async event => {
         message: "We're sorry, but you've reached the end of search results.",
       });
       loadMoreBtn.classList.add('is-hidden');
-      loadMoreBtn.removeEventListener('click', onLoadMoreBtnClick);
       smoothScroll();
     }
   } catch (error) {
